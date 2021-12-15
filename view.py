@@ -118,6 +118,7 @@ class View(Tk.Tk):
         
         self.echo_enable = Tk.BooleanVar()
         self.vibrato_enable = Tk.BooleanVar()
+        self.am_enable = Tk.BooleanVar()
 
         Tk.Label(
             self.effect_selector,
@@ -143,7 +144,14 @@ class View(Tk.Tk):
             offvalue = False
         ).grid(row=2, column=0, sticky='W')
 
-        
+        Tk.Checkbutton(
+            self.effect_selector,
+            text = 'AM',
+            variable = self.am_enable,
+            onvalue = True,
+            offvalue = False
+        ).grid(row=3, column=0, sticky='W')
+
         ##### Options #####
         self.button_frame = Tk.LabelFrame(self, text="Options", padx=10, pady=5)
         self.button_frame.grid(row=2, column=0, columnspan=2, sticky='W')
@@ -202,6 +210,14 @@ class View(Tk.Tk):
             command=self.on_effect_mode_change
         ).grid(row=0, column=1, sticky='W', padx=4)
 
+        Tk.Radiobutton(
+            self.effect_radio,
+            text="AM",
+            variable=self.effect_mode,
+            value=2,
+            command=self.on_effect_mode_change
+        ).grid(row=0, column=2, sticky='W', padx=4)
+
         ### Echo ###
         self.echo_frame = Tk.Frame(self.effect_frame, padx=5)
         self.echo_frame.grid(row=1, column=0, sticky='W')
@@ -216,6 +232,21 @@ class View(Tk.Tk):
         # Second line
         self.generate_slider(self.echo_frame, self.echo_delay,
             1, 'Delay (s)', 0.01, 0.50, 0.01)
+        
+        ### Modulation Frequency ###
+        self.modulation_frame = Tk.Frame(self.effect_frame, padx=5)
+        self.modulation_frame.grid(row=1, column=0, sticky='W')
+
+        self.modulation_feedback = Tk.DoubleVar(value = 80)
+        self.modulation_frequency = Tk.DoubleVar(value = 200)
+
+        # First line
+        self.generate_slider(self.modulation_frame, self.modulation_feedback,
+            0, 'Gain (%)', 0.0, 100.0, 1.0)
+
+        # Second line
+        self.generate_slider(self.modulation_frame, self.modulation_frequency,
+            1, 'Frequency (Hz)', 0, 1000, 50)
         
         ### Vibrato ###
         self.vibrato_frame = Tk.Frame(self.effect_frame, padx=5)
@@ -232,7 +263,7 @@ class View(Tk.Tk):
         self.generate_slider(self.vibrato_frame, self.vibrato_w,
             1, 'Oscillation W', 0.1, 0.5, 0.1)
         
-        self.frames = [self.echo_frame, self.vibrato_frame]
+        self.frames = [self.echo_frame, self.vibrato_frame, self.modulation_frame]
         plt.ion()
     
     def handle_quit(self):
@@ -341,7 +372,7 @@ class View(Tk.Tk):
             frame,
             text = title,
             padx = 3,
-            width = 11,
+            width = 12,
             anchor = 'e',
             bd = 1
         ).grid(row=row, column=0, sticky='E', pady=5)
@@ -357,7 +388,7 @@ class View(Tk.Tk):
         Tk.Label(
             frame,
             text = min_num,
-            width = 4,
+            width = 3,
             padx = 3,
             bd = 1
         ).grid(row=row, column=2)

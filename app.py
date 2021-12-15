@@ -4,6 +4,7 @@
 
 from effects.echo import *
 from effects.vibrato import *
+from effects.am import *
 
 from view import View
 import wave
@@ -31,6 +32,7 @@ class App:
         self.rate = rate
         self.echo_effect = EchoEffect(rate, self.block_len)
         self.vibrato_effect = VibratoEffect(rate, self.block_len)
+        self.am_effect = AMEffect(rate, self.block_len)
 
     def update_io(self):
         if self.mode == 0:
@@ -91,6 +93,9 @@ class App:
             if self.view.echo_enable.get():
                 output_block += self.echo_effect.apply(self.view, input_tuple)
 
+            if self.view.am_enable.get():
+                output_block += self.am_effect.apply(self.view, input_tuple)
+
             if self.view.vibrato_enable.get():
                 output_block += self.vibrato_effect.apply(self.view, input_tuple)
 
@@ -132,8 +137,9 @@ class App:
         if hasattr(self, 'output_wf') and self.output_wf:
             self.output_wf.close()
             self.output_wf = None
-        self.stream.stop_stream()
-        self.stream.close()
+        if hasattr(self, 'stream'):
+            self.stream.stop_stream()
+            self.stream.close()
 
     def change_mode(self, mode):
         self.mode_changed = True

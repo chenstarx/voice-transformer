@@ -5,7 +5,7 @@
 from effects.echo import *
 from effects.vibrato import *
 from effects.am import *
-from effects.doppler import *
+from effects.pitchshift import *
 from effects.chorus import *
 
 from view import View
@@ -35,7 +35,7 @@ class App:
         self.echo_effect = EchoEffect(rate, self.block_len)
         self.vibrato_effect = VibratoEffect(rate, self.block_len)
         self.am_effect = AMEffect(rate, self.block_len)
-        self.doppler_effect = DopplerEffect(rate, self.block_len)
+        self.pitchshift_effect = PitchShift(rate, self.block_len)
         self.chorus_effect = ChorusEffect(rate, self.block_len)
 
     def update_io(self):
@@ -103,8 +103,8 @@ class App:
             if self.view.vibrato_enable.get():
                 output_block += self.vibrato_effect.apply(self.view, input_tuple)
 
-            if self.view.doppler_enable.get():
-                output_block += self.doppler_effect.apply(self.view, input_tuple)
+            if self.view.pitchshift_enable.get():
+                output_block += self.pitchshift_effect.apply(self.view, input_tuple)
 
             if self.view.chorus_enable.get():
                 output_block += self.chorus_effect.apply(self.view, input_tuple)
@@ -129,6 +129,8 @@ class App:
             else:
                 w_count += 1
             
+            output_block = np.clip(output_block, -32768, 32767)
+
             binary_data = struct.pack('h' * self.block_len, *output_block)
             self.stream.write(binary_data)
 

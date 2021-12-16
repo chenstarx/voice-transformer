@@ -70,7 +70,7 @@ class View(Tk.Tk):
         Tk.Label(
             io_label,
             textvariable=self.file_path,
-            width = 50,
+            width = 54,
             relief = Tk.SUNKEN,
             anchor='w',
             bd = 1
@@ -89,7 +89,7 @@ class View(Tk.Tk):
         self.save_entry = Tk.Entry(
             self.io_frame,
             textvariable=self.save_name,
-            width = 50,
+            width = 54,
             bd = 1
         )
         self.save_entry.grid(row=2, column=1, columnspan=3)
@@ -114,12 +114,12 @@ class View(Tk.Tk):
 
         ##### Effect Selector #####
         self.effect_selector = Tk.LabelFrame(self, text="Sound Effects", padx=8, pady=5)
-        self.effect_selector.grid(row=1, column=0, pady=5, sticky='NW')
+        self.effect_selector.grid(row=1, column=0, pady=5, sticky='NW', rowspan=2)
         
         self.echo_enable = Tk.BooleanVar()
         self.vibrato_enable = Tk.BooleanVar()
         self.am_enable = Tk.BooleanVar()
-        self.doppler_enable = Tk.BooleanVar()
+        self.pitchshift_enable = Tk.BooleanVar()
         self.chorus_enable = Tk.BooleanVar()
 
         Tk.Label(
@@ -145,22 +145,14 @@ class View(Tk.Tk):
             onvalue = True,
             offvalue = False
         ).grid(row=2, column=0, sticky='W')
-
-        Tk.Checkbutton(
-            self.effect_selector,
-            text = 'AM',
-            variable = self.am_enable,
-            onvalue = True,
-            offvalue = False
-        ).grid(row=3, column=0, sticky='W')
         
         Tk.Checkbutton(
             self.effect_selector,
-            text = 'Doppler',
-            variable = self.doppler_enable,
+            text = 'Pitch Shift',
+            variable = self.pitchshift_enable,
             onvalue = True,
             offvalue = False
-        ).grid(row=4, column=0, sticky='W')
+        ).grid(row=3, column=0, sticky='W')
         
         Tk.Checkbutton(
             self.effect_selector,
@@ -168,11 +160,19 @@ class View(Tk.Tk):
             variable = self.chorus_enable,
             onvalue = True,
             offvalue = False
+        ).grid(row=4, column=0, sticky='W')
+
+        Tk.Checkbutton(
+            self.effect_selector,
+            text = 'AM',
+            variable = self.am_enable,
+            onvalue = True,
+            offvalue = False
         ).grid(row=5, column=0, sticky='W')
 
         ##### Options #####
-        self.button_frame = Tk.LabelFrame(self, text="Options", padx=10, pady=5)
-        self.button_frame.grid(row=2, column=0, columnspan=2, sticky='W')
+        self.button_frame = Tk.LabelFrame(self, text="Options", padx=15, pady=9)
+        self.button_frame.grid(row=2, column=1, columnspan=2, sticky='NE')
 
         # Button - Wave Graph
         Tk.Button(
@@ -190,13 +190,13 @@ class View(Tk.Tk):
             padx = 10,
             bd = 1,
             command = self.open_spectrum
-        ).grid(row=0, column=1, padx=20)
+        ).grid(row=0, column=1, padx=32)
 
         # Button - Quit
         Tk.Button(
             self.button_frame,
             text = 'Quit',
-            padx = 10,
+            padx = 16,
             bd = 1,
             command = self.handle_quit
         ).grid(row=0, column=2)
@@ -218,7 +218,7 @@ class View(Tk.Tk):
             variable=self.effect_mode,
             value=0,
             command=self.on_effect_mode_change
-        ).grid(row=0, column=0, sticky='W', padx=4)
+        ).grid(row=0, column=0, sticky='W', padx=4, pady=2)
 
         Tk.Radiobutton(
             self.effect_radio,
@@ -230,7 +230,7 @@ class View(Tk.Tk):
 
         Tk.Radiobutton(
             self.effect_radio,
-            text="AM",
+            text="Pitch Shift",
             variable=self.effect_mode,
             value=2,
             command=self.on_effect_mode_change
@@ -238,7 +238,7 @@ class View(Tk.Tk):
 
         Tk.Radiobutton(
             self.effect_radio,
-            text="Doppler",
+            text="Chorus",
             variable=self.effect_mode,
             value=3,
             command=self.on_effect_mode_change
@@ -246,7 +246,7 @@ class View(Tk.Tk):
 
         Tk.Radiobutton(
             self.effect_radio,
-            text="Chorus",
+            text="AM",
             variable=self.effect_mode,
             value=4,
             command=self.on_effect_mode_change
@@ -271,12 +271,12 @@ class View(Tk.Tk):
         self.vibrato_frame = Tk.Frame(self.effect_frame, padx=5)
         # self.vibrato_frame.grid(row=1, column=0, sticky='W')
 
-        self.vibrato_f0 = Tk.DoubleVar(value = 10)
+        self.vibrato_f0 = Tk.DoubleVar(value = 5)
         self.vibrato_w = Tk.DoubleVar(value = 0.2)
 
         # First line
         self.generate_slider(self.vibrato_frame, self.vibrato_f0,
-            0, 'Oscillation f0', 1.0, 20.0, 1.0)
+            0, 'Oscillation f0', 1.0, 10.0, 1.0)
 
         # Second line
         self.generate_slider(self.vibrato_frame, self.vibrato_w,
@@ -297,37 +297,36 @@ class View(Tk.Tk):
         self.generate_slider(self.am_frame, self.am_frequency,
             1, 'Frequency (Hz)', 0, 1000, 50)
 
-        ### Doppler Effect ###
-        self.doppler_frame = Tk.Frame(self.effect_frame, padx=5)
+        ### Pitch Shift ###
+        self.pitchshift_frame = Tk.Frame(self.effect_frame, padx=5)
         # self.vibrato_frame.grid(row=1, column=0, sticky='W')
 
         self.velocity_receiver = Tk.DoubleVar(value = 100)
         self.velocity_source = Tk.DoubleVar(value = 100)
 
         # First line
-        self.generate_slider(self.doppler_frame, self.velocity_receiver,
+        self.generate_slider(self.pitchshift_frame, self.velocity_receiver,
             0, 'V_receiver (m/s)', 1.0, 500.0, 10.0)
 
         # Second line
-        self.generate_slider(self.doppler_frame, self.velocity_source,
+        self.generate_slider(self.pitchshift_frame, self.velocity_source,
             1, 'V_source (m/s)', 1.0, 500.0, 10.0)
 
         ### Chorus ###
         self.chorus_frame = Tk.Frame(self.effect_frame, padx=5)
 
-        self.chorus_frequency = Tk.DoubleVar(value = 2)
-        self.chorus_gain = Tk.DoubleVar(value = 0.2)
+        self.chorus_w = Tk.DoubleVar(value = 0.05)
+        self.chorus_gain = Tk.DoubleVar(value = 80)
 
         # First line
-        self.generate_slider(self.chorus_frame, self.chorus_frequency,
-            0, 'Oscillation f0', 1.0, 10.0, 1.0)
+        self.generate_slider(self.chorus_frame, self.chorus_gain,
+            0, 'Gain (%)', 0, 100, 1)
 
         # Second line
-        self.generate_slider(self.chorus_frame, self.chorus_gain,
-            1, 'Oscillation W', 0.1, 1, 0.1)
+        self.generate_slider(self.chorus_frame, self.chorus_w,
+            1, 'Oscillation W', 0.01, 0.25, 0.01)
 
-
-        self.frames = [self.echo_frame, self.vibrato_frame, self.am_frame, self.doppler_frame, self.chorus_frame]
+        self.frames = [self.echo_frame, self.vibrato_frame, self.pitchshift_frame, self.chorus_frame, self.am_frame]
         plt.ion()
     
     def handle_quit(self):
@@ -436,6 +435,7 @@ class View(Tk.Tk):
             frame,
             text = title,
             padx = 3,
+            pady = 2,
             width = 12,
             anchor = 'e',
             bd = 1

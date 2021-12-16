@@ -101,6 +101,9 @@ class App:
             if self.view.vibrato_enable.get():
                 output_block += self.vibrato_effect.apply(self.view, input_tuple)
 
+            if self.view.doppler_enable.get():
+                output_block += self.doppler_effect.apply(self.view, input_tuple)
+
             # Spectrum Plot
             if self.view.show_spectrum and s_count > 1:
                 s_count = 0

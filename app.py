@@ -6,6 +6,7 @@ from effects.echo import *
 from effects.vibrato import *
 from effects.am import *
 from effects.doppler import *
+from effects.chorus import *
 
 from view import View
 import wave
@@ -35,6 +36,7 @@ class App:
         self.vibrato_effect = VibratoEffect(rate, self.block_len)
         self.am_effect = AMEffect(rate, self.block_len)
         self.doppler_effect = DopplerEffect(rate, self.block_len)
+        self.chorus_effect = ChorusEffect(rate, self.block_len)
 
     def update_io(self):
         if self.mode == 0:
@@ -104,6 +106,9 @@ class App:
             if self.view.doppler_enable.get():
                 output_block += self.doppler_effect.apply(self.view, input_tuple)
 
+            if self.view.chorus_enable.get():
+                output_block += self.chorus_effect.apply(self.view, input_tuple)
+            
             # Spectrum Plot
             if self.view.show_spectrum and s_count > 1:
                 s_count = 0

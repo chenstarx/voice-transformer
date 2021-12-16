@@ -120,6 +120,7 @@ class View(Tk.Tk):
         self.vibrato_enable = Tk.BooleanVar()
         self.am_enable = Tk.BooleanVar()
         self.doppler_enable = Tk.BooleanVar()
+        self.chorus_enable = Tk.BooleanVar()
 
         Tk.Label(
             self.effect_selector,
@@ -160,6 +161,14 @@ class View(Tk.Tk):
             onvalue = True,
             offvalue = False
         ).grid(row=4, column=0, sticky='W')
+        
+        Tk.Checkbutton(
+            self.effect_selector,
+            text = 'Chorus',
+            variable = self.chorus_enable,
+            onvalue = True,
+            offvalue = False
+        ).grid(row=5, column=0, sticky='W')
 
         ##### Options #####
         self.button_frame = Tk.LabelFrame(self, text="Options", padx=10, pady=5)
@@ -235,6 +244,14 @@ class View(Tk.Tk):
             command=self.on_effect_mode_change
         ).grid(row=0, column=3, sticky='W', padx=4)
 
+        Tk.Radiobutton(
+            self.effect_radio,
+            text="Chorus",
+            variable=self.effect_mode,
+            value=4,
+            command=self.on_effect_mode_change
+        ).grid(row=0, column=4, sticky='W', padx=4)
+
         ### Echo ###
         self.echo_frame = Tk.Frame(self.effect_frame, padx=5)
         self.echo_frame.grid(row=1, column=0, sticky='W')
@@ -284,18 +301,33 @@ class View(Tk.Tk):
         self.doppler_frame = Tk.Frame(self.effect_frame, padx=5)
         # self.vibrato_frame.grid(row=1, column=0, sticky='W')
 
-        self.velocity_receiver = Tk.DoubleVar(value = 1000)
-        self.velocity_source = Tk.DoubleVar(value = 1000)
+        self.velocity_receiver = Tk.DoubleVar(value = 100)
+        self.velocity_source = Tk.DoubleVar(value = 100)
 
         # First line
         self.generate_slider(self.doppler_frame, self.velocity_receiver,
-            0, 'velocity_receiver (m/s)', 1.0, 5000.0, 100.0)
+            0, 'V_receiver (m/s)', 1.0, 500.0, 10.0)
 
         # Second line
         self.generate_slider(self.doppler_frame, self.velocity_source,
-            1, 'velocity_source (m/s)', 1.0, 5000.0, 100.0)
-        
-        self.frames = [self.echo_frame, self.vibrato_frame, self.am_frame, self.doppler_frame]
+            1, 'V_source (m/s)', 1.0, 500.0, 10.0)
+
+        ### Chorus ###
+        self.chorus_frame = Tk.Frame(self.effect_frame, padx=5)
+
+        self.chorus_frequency = Tk.DoubleVar(value = 2)
+        self.chorus_gain = Tk.DoubleVar(value = 0.2)
+
+        # First line
+        self.generate_slider(self.chorus_frame, self.chorus_frequency,
+            0, 'Oscillation f0', 1.0, 10.0, 1.0)
+
+        # Second line
+        self.generate_slider(self.chorus_frame, self.chorus_gain,
+            1, 'Oscillation W', 0.1, 1, 0.1)
+
+
+        self.frames = [self.echo_frame, self.vibrato_frame, self.am_frame, self.doppler_frame, self.chorus_frame]
         plt.ion()
     
     def handle_quit(self):

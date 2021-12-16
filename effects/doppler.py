@@ -2,7 +2,7 @@ from effects.effect import Effect
 import math
 
 soundspeed = 343.0  #Speed of sound
-frequency = 200.0  #assume speaking frequency in Hz
+frequency = 2000.0  #frequency in Hz
 
 class DopplerEffect(Effect):
     def __init__(self, rate, block_len):

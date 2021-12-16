@@ -301,16 +301,16 @@ class View(Tk.Tk):
         self.pitchshift_frame = Tk.Frame(self.effect_frame, padx=5)
         # self.vibrato_frame.grid(row=1, column=0, sticky='W')
 
-        self.velocity_receiver = Tk.DoubleVar(value = 100)
-        self.velocity_source = Tk.DoubleVar(value = 100)
+        self.pitchshift_gain = Tk.DoubleVar(value = 80)
+        self.pitchshift_freq = Tk.DoubleVar(value = 200)
 
         # First line
-        self.generate_slider(self.pitchshift_frame, self.velocity_receiver,
-            0, 'V_receiver (m/s)', 1.0, 500.0, 10.0)
+        self.generate_slider(self.pitchshift_frame, self.pitchshift_gain,
+            0, 'Gain (%)', 1.0, 100.0, 1.0)
 
         # Second line
-        self.generate_slider(self.pitchshift_frame, self.velocity_source,
-            1, 'V_source (m/s)', 1.0, 500.0, 10.0)
+        self.generate_slider(self.pitchshift_frame, self.pitchshift_freq,
+            1, 'Shift Freq (Hz)', -200, 500, 10.0)
 
         ### Chorus ###
         self.chorus_frame = Tk.Frame(self.effect_frame, padx=5)
@@ -413,7 +413,7 @@ class View(Tk.Tk):
     def open_spectrum(self):
         plt.figure(2)
         plt.xlim(0, 0.25 * self.app.rate)
-        plt.ylim(0, 20 * self.app.rate)
+        plt.ylim(0, 1)
         plt.xlabel('Frequency (Hz)')
 
         self.show_spectrum = True

@@ -112,8 +112,8 @@ class App:
             # Spectrum Plot
             if self.view.show_spectrum and s_count > 1:
                 s_count = 0
-                X = np.fft.fft(input_tuple)
-                Y = np.fft.fft(output_block)
+                X = np.fft.fft(input_tuple, norm="ortho") / self.rate
+                Y = np.fft.fft(output_block, norm="ortho") / self.rate
 
                 # Update y-data of plot
                 self.view.spectrum_x.set_ydata(np.abs(X))

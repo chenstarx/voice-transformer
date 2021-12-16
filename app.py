@@ -5,6 +5,7 @@
 from effects.echo import *
 from effects.vibrato import *
 from effects.am import *
+from effects.doppler import *
 
 from view import View
 import wave
@@ -33,6 +34,7 @@ class App:
         self.echo_effect = EchoEffect(rate, self.block_len)
         self.vibrato_effect = VibratoEffect(rate, self.block_len)
         self.am_effect = AMEffect(rate, self.block_len)
+        self.doppler_effect = DopplerEffect(rate, self.block_len)
 
     def update_io(self):
         if self.mode == 0:
